@@ -24,7 +24,6 @@ public class BotInitializer {
         try {
             telegramBotsApi.registerBot(telegramBot);
         } catch (TelegramApiException ignored) {
-
         }
     }
 }
