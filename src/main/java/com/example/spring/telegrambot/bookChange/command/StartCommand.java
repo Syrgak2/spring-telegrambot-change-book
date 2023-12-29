@@ -1,26 +1,38 @@
 package com.example.spring.telegrambot.bookChange.command;
 
-import com.example.spring.telegrambot.bookChange.command.annotation.AdminCommand;
-import com.example.spring.telegrambot.bookChange.service.SendBotMessageService;
-import com.example.spring.telegrambot.bookChange.service.UserService;
+import com.example.spring.telegrambot.bookChange.bot.TelegramBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.example.spring.telegrambot.bookChange.command.CommandUtils.getChatId;
 
-@AdminCommand
 public class StartCommand implements Command {
-    private final SendBotMessageService sendBotMessageService;
+    TelegramBot telegramBot;
 
-    private final static String START_MESSAGE = "Привет я самый полезный бот на в мире";
-
-    public StartCommand(SendBotMessageService sendBotMessageService) {
-        this.sendBotMessageService = sendBotMessageService;
+    public StartCommand(TelegramBot telegramBot) {
+        this.telegramBot = telegramBot;
     }
 
-    @Override
 
+    private final String START_MESSAGE = "Привет я самый полезный бот на в мире";
+
+
+    @Override
     public void execute(Update update) {
         Long chatId = getChatId(update);
-        sendBotMessageService.sendMessage(chatId, START_MESSAGE);
+        sendMessage(chatId);
+    }
+
+    private void sendMessage(Long chatId) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId.toString());
+        sendMessage.setText(START_MESSAGE);
+
+        try {
+            telegramBot.execute(sendMessage);
+        } catch (TelegramApiException ignored) {
+
+        }
     }
 }

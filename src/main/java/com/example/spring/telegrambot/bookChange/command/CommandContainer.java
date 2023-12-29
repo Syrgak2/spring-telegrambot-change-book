@@ -1,52 +1,36 @@
 package com.example.spring.telegrambot.bookChange.command;
 
-import com.example.spring.telegrambot.bookChange.command.annotation.AdminCommand;
-import com.example.spring.telegrambot.bookChange.service.SendBotMessageService;
-import static java.util.Objects.nonNull;
-
-import com.example.spring.telegrambot.bookChange.service.UserService;
-
-import com.google.common.collect.ImmutableMap;
-
-import com.example.spring.telegrambot.bookChange.command.CommandName.*;
+import com.example.spring.telegrambot.bookChange.bot.TelegramBot;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.example.spring.telegrambot.bookChange.command.CommandName.START;
 
+@Component
 public class CommandContainer {
 
     private Map<String, Command> commandMap;
-
-    private List<String> admins;
     private final Command unknowCommand;
 
+    private TelegramBot telegramBot;
 
-    public CommandContainer(SendBotMessageService sendBotMessageService, List<String> admins) {
+
+    public CommandContainer(TelegramBot telegramBot) {
+        this.telegramBot = telegramBot;
+        this.unknowCommand = new UnknownCommand(telegramBot);
+    }
+
+
+    public Command findCommand(String commandId) {
+        return getCommand().getOrDefault(commandId, unknowCommand);
+    }
+
+    private Map<String, Command> getCommand() {
         commandMap = new HashMap<>();
-        commandMap.put(START.getCommand(), new StartCommand(sendBotMessageService));
-
-
-        this.admins = admins;
-        this.unknowCommand = new UnknownCommand(sendBotMessageService);
+        commandMap.put(START.getCommand(), new StartCommand(telegramBot));
+        return commandMap;
     }
 
-
-    public Command findCommand(String commandId, String username) {
-        Command orDefault = commandMap.getOrDefault(commandId, unknowCommand);
-        if (isAdminCommand(orDefault)) {
-            if (admins.contains(username)) {
-                return orDefault;
-            } else {
-                return unknowCommand;
-            }
-        }
-        return orDefault;
-    }
-
-    private boolean isAdminCommand(Command command) {
-        return nonNull(command.getClass().getAnnotation(AdminCommand.class));
-    }
 }
