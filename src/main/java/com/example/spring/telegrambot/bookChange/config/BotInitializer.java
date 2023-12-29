@@ -1,6 +1,6 @@
 package com.example.spring.telegrambot.bookChange.config;
 
-import com.example.spring.telegrambot.bookChange.TelegramBot;
+import com.example.spring.telegrambot.bookChange.bot.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
