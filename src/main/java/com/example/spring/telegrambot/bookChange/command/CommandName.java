@@ -1,21 +1,22 @@
 package com.example.spring.telegrambot.bookChange.command;
 
 
+import lombok.Getter;
+
+@Getter
 public enum CommandName {
     START("/start"),
     STOP("/stop"),
     REGISTER("/register"),
-    ADD_BOOK("/addbook"),
-    DELETE("/deletebook");
+    HELP("/help"),
+    FIND_BOOK("/find"),
+    ADD_BOOK("/add"),
+    DELETE_BOOK("/delete");
 
     private final String command;
 
     CommandName(String command) {
         this.command = command;
-    }
-
-    public String getCommand() {
-        return command;
     }
 
 
