@@ -5,9 +5,7 @@ import lombok.Getter;
 @Getter
 public enum UserStatusName {
     ACTIVE("active"),
-    ADD_BOOK("addBook"),
-    FIND_BOOK("findBook"),
-    REGISTER("register");
+    WAITING("waiting");
 
     private final String status;
 

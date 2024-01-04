@@ -37,7 +37,7 @@ public class CommandContainer {
         commandMap.put(REGISTER.getCommand(), new RegisterCommand(telegramBot));
         commandMap.put(HELP.getCommand(), new HelpCommand(telegramBot));
         commandMap.put(ADD_BOOK.getCommand(), new AddBookCommand(telegramBot, userRepository));
-        commandMap.put(DELETE_BOOK.getCommand(), new DeleteBookCommand(telegramBot));
+        commandMap.put(DELETE_BOOK.getCommand(), new DeleteBookCommand(telegramBot, userRepository));
         return commandMap;
     }
 
