@@ -3,8 +3,7 @@ package com.example.spring.telegrambot.bookChange.bot;
 import com.example.spring.telegrambot.bookChange.command.CommandContainer;
 import com.example.spring.telegrambot.bookChange.config.BotConfig;
 import com.example.spring.telegrambot.bookChange.model.User;
-import com.example.spring.telegrambot.bookChange.repository.UserRepository;
-import com.example.spring.telegrambot.bookChange.repository.UserRepositoryImpl;
+import com.example.spring.telegrambot.bookChange.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,18 +11,25 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.example.spring.telegrambot.bookChange.command.CommandUtils.getMessage;
 import static com.example.spring.telegrambot.bookChange.command.CommandUtils.getUserName;
-import static com.example.spring.telegrambot.bookChange.model.UserStatusName.ADD_BOOK;
+import static com.example.spring.telegrambot.bookChange.model.UserStatusName.WAITING;
 
 @Component
-@AllArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
-    BotConfig botConfig;
-    private final UserRepository userRepository = new UserRepositoryImpl();
+    BotConfig botConfig = new BotConfig();
+    private UserService userService;
+    private CommandContainer commandContainer = new CommandContainer(this, userService);
 
-    private final CommandContainer commandContainer = new CommandContainer(this, userRepository);
+    public TelegramBot(String botToken, UserService userService, CommandContainer commandContainer) {
+        super(botToken);
+        this.userService = userService;
+        this.commandContainer = commandContainer;
+    }
+
+    public TelegramBot() {
+
+    }
 
     public static String COMMAND_PREFIX = "/";
-
 
     @Override
     public String getBotUsername() {
@@ -37,7 +43,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        User user = userRepository.find(getUserName(update));
+        User user = userService.getUserReference(getUserName(update));
         if (update.hasMessage() && update.getMessage().hasText()) {
             String massageText = getMessage(update).trim();
 
@@ -45,7 +51,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String commandIdentifier = massageText.split(" ")[0].toLowerCase();
                 commandContainer.findCommand(commandIdentifier).execute(update);
             } else {
-                if (user.getUserStatus().equals(ADD_BOOK.getStatus())) {
+                if (user.getUserStatus().equals(WAITING.getStatus())) {
                     commandContainer.findCommand("/add").execute(update);
                 }
             }

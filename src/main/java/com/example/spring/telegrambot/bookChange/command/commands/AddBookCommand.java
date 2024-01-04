@@ -4,6 +4,7 @@ import com.example.spring.telegrambot.bookChange.bot.TelegramBot;
 import com.example.spring.telegrambot.bookChange.command.Command;
 import com.example.spring.telegrambot.bookChange.model.User;
 import com.example.spring.telegrambot.bookChange.repository.UserRepository;
+import com.example.spring.telegrambot.bookChange.service.UserService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -12,14 +13,14 @@ import static com.example.spring.telegrambot.bookChange.command.CommandUtils.*;
 import static com.example.spring.telegrambot.bookChange.model.UserStatusName.*;
 
 public class AddBookCommand implements Command {
-    private UserRepository userRepository;
+    private UserService userService;
     private TelegramBot telegramBot;
     String addMessage = " ";
 
 
-    public AddBookCommand(TelegramBot telegramBot, UserRepository userRepository) {
+    public AddBookCommand(TelegramBot telegramBot, UserService userService) {
         this.telegramBot = telegramBot;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class AddBookCommand implements Command {
         Long chatId = getChatId(update);
         String userName = getUserName(update);
 
-        User user = userRepository.find(userName);
+        User user = userService.getUserReference(userName);
         if (user.getUserStatus().equals(ACTIVE.getStatus())) {
             addMessage = "Ведите название книги";
             sendStartMessage(chatId, addMessage, user);

@@ -4,6 +4,7 @@ import com.example.spring.telegrambot.bookChange.bot.TelegramBot;
 import com.example.spring.telegrambot.bookChange.command.Command;
 import com.example.spring.telegrambot.bookChange.model.User;
 import com.example.spring.telegrambot.bookChange.repository.UserRepository;
+import com.example.spring.telegrambot.bookChange.service.UserService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -13,13 +14,13 @@ import static com.example.spring.telegrambot.bookChange.model.UserStatusName.*;
 
 public class DeleteBookCommand implements Command {
     private TelegramBot telegramBot;
-    private UserRepository userRepository;
+    private UserService userService;
 
     private String deleteMessage = " ";
 
 
-    public DeleteBookCommand(TelegramBot telegramBot, UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public DeleteBookCommand(TelegramBot telegramBot, UserService userService) {
+        this.userService = userService;
         this.telegramBot = telegramBot;
     }
 
@@ -29,7 +30,7 @@ public class DeleteBookCommand implements Command {
         Long chatId = getChatId(update);
         String userName = getUserName(update);
 
-        User user = userRepository.find(userName);
+        User user = userService.getUserReference(userName);
         if (user.getUserStatus().equals(ACTIVE.getStatus())) {
             deleteMessage = "Выберите книгу для удаления";
             sendStartMessage(chatId, deleteMessage, user);

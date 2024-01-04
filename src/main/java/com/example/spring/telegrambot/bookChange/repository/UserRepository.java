@@ -1,19 +1,11 @@
 package com.example.spring.telegrambot.bookChange.repository;
 
 import com.example.spring.telegrambot.bookChange.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository {
+@Repository
+public interface UserRepository extends JpaRepository<User, String> {
 
-//**    Метод для добавления пользователя в базу.
-//**    Возвращает true если при добавлении
-//**    Если user сушествует в базе данных возвращает false
-    boolean add(User user);
-
-    boolean add(String userId, String userFirstName, String userLastName, String userStatus);
-
-    User find(String userId);
-
-
-    //    меняет статус пользователя
-    void setUserStatus(User user, String status);
 }

@@ -3,6 +3,7 @@ package com.example.spring.telegrambot.bookChange.command.commands;
 import com.example.spring.telegrambot.bookChange.bot.TelegramBot;
 import com.example.spring.telegrambot.bookChange.command.Command;
 import com.example.spring.telegrambot.bookChange.repository.UserRepository;
+import com.example.spring.telegrambot.bookChange.service.UserService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -14,12 +15,12 @@ import static com.example.spring.telegrambot.bookChange.model.UserStatusName.ACT
 
 public class StartCommand extends BotCommand implements Command {
     private TelegramBot telegramBot;
-    private UserRepository userRepository;
+    private UserService userService;
 
 
-    public StartCommand(TelegramBot telegramBot, UserRepository userRepository) {
+    public StartCommand(TelegramBot telegramBot, UserService userService) {
         this.telegramBot = telegramBot;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
 
@@ -28,12 +29,12 @@ public class StartCommand extends BotCommand implements Command {
         Long chatId = getChatId(update);
         String userFullName = getFirstName(update) + " " + getLastName(update);
         String startMessage = " ";
-        boolean addStatus = userRepository.add(getUserName(update),
+        boolean additionStatus = userService.save(getUserName(update),
                 getFirstName(update),
                 getLastName(update),
                 ACTIVE.getStatus());
 
-        if (addStatus) {
+        if (additionStatus) {
             startMessage = """
                     Привет я самый полезный бот на в мире.\s
                      Я могу найти книгу для обмена, покупки.\s
